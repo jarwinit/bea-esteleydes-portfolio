@@ -69,7 +69,7 @@ export default function Home() {
     <header className="mobile-header"><a href="#top">BJE</a><span>Selected works</span></header>
 
     <div className="archive-content">
-      <section className="opening" style={{ backgroundImage: `linear-gradient(140deg,rgba(7,29,22,.32),rgba(5,23,18,.9)),url(${src(projects[0].images[0])})` }}><p>Architectural portfolio · 2021 to 2026</p><h1>Spaces shaped by people,<br /><em>nature, and life.</em></h1><a href="#project-01">Enter collection <span>↓</span></a></section>
+      <section className="opening" style={{ backgroundImage: `linear-gradient(140deg,rgba(7,29,22,.32),rgba(5,23,18,.9)),url(${src(projects[0].images[0])})` }}><p>Architectural portfolio · 2021 to 2026</p><h1><span>Spaces</span><span>shaped by</span><span>people, nature,</span><span>and life.</span></h1><a href="#project-01">Enter collection <span>↓</span></a></section>
       {projects.map((project) => <section className="project-card" data-project={project.number} id={`project-${project.number}`} key={project.number}>
         <div className="project-media">
           {project.images[1] ? <img className="supporting-image" src={src(project.images[1])} alt="" /> : <div className="supporting-image empty" aria-hidden="true" />}
