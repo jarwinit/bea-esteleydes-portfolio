@@ -49,7 +49,7 @@ export default function Home() {
       </header>
 
       <section className="hero" id="top">
-        <div className="hero-image" style={{ backgroundImage: "url('/projects/image22.png')" }} />
+        <div className="hero-image" style={{ backgroundImage: "url('./projects/image22.png')" }} />
         <div className="hero-wash" />
         <div className="hero-copy">
           <p className="eyebrow">Selected works · 2021 to 2026</p>
@@ -78,9 +78,9 @@ export default function Home() {
               <p className="description">{project.description}</p>
               <div className="emphasis">{project.emphasis.map((line) => <p key={line}>{line}</p>)}</div>
               <div className={`gallery gallery-${index % 3}`}>
-                {project.images.map((image, imageIndex) => <button className="gallery-item" key={image} onClick={() => setActiveImage(image)} aria-label={`Open ${project.title} image ${imageIndex + 1}`}><img src={`/projects/${image}`} alt={`${project.title} visual ${imageIndex + 1}`} /></button>)}
+                {project.images.map((image, imageIndex) => <button className="gallery-item" key={image} onClick={() => setActiveImage(image)} aria-label={`Open ${project.title} image ${imageIndex + 1}`}><img src={`./projects/${image}`} alt={`${project.title} visual ${imageIndex + 1}`} /></button>)}
               </div>
-              {project.plan && <div className="plan-section"><div><p className="eyebrow">Floor plan</p><p>Spatial logic, kept with its project.</p></div><div className="plan-gallery">{project.plan.map((image, planIndex) => <button className="gallery-item" key={image} onClick={() => setActiveImage(image)} aria-label={`Open ${project.title} floor plan ${planIndex + 1}`}><img src={`/projects/${image}`} alt={`${project.title} floor plan ${planIndex + 1}`} /></button>)}</div></div>}
+              {project.plan && <div className="plan-section"><div><p className="eyebrow">Floor plan</p><p>Spatial logic, kept with its project.</p></div><div className="plan-gallery">{project.plan.map((image, planIndex) => <button className="gallery-item" key={image} onClick={() => setActiveImage(image)} aria-label={`Open ${project.title} floor plan ${planIndex + 1}`}><img src={`./projects/${image}`} alt={`${project.title} floor plan ${planIndex + 1}`} /></button>)}</div></div>}
             </div>
           </section>
         ))}
@@ -88,7 +88,7 @@ export default function Home() {
 
       <footer><p>Bea Jean Rowella Esteleydes</p><p>Architectural Portfolio</p><a href="#top">Back to top ↑</a></footer>
 
-      {activeImage && <div className="lightbox" role="dialog" aria-modal="true" aria-label="Expanded project image" onClick={() => setActiveImage(null)}><button className="close" onClick={() => setActiveImage(null)} aria-label="Close image preview">Close ×</button><img src={`/projects/${activeImage}`} alt="Expanded project visual" onClick={(event) => event.stopPropagation()} /></div>}
+      {activeImage && <div className="lightbox" role="dialog" aria-modal="true" aria-label="Expanded project image" onClick={() => setActiveImage(null)}><button className="close" onClick={() => setActiveImage(null)} aria-label="Close image preview">Close ×</button><img src={`./projects/${activeImage}`} alt="Expanded project visual" onClick={(event) => event.stopPropagation()} /></div>}
     </main>
   );
 }
