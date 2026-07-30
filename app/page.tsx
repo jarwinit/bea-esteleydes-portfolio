@@ -13,7 +13,6 @@ const projects: Project[] = [
   { number: "05", title: "Vacation House", description: "A modern interpretation of the tropical hut.", emphasis: "Open to air, light, and landscape", images: ["vacation-house/01-exterior.png","vacation-house/03-interior.png","vacation-house/04-interior.png","vacation-house/05-interior.png","vacation-house/06-interior.png"], plans: ["vacation-house/floor-plan-01.png"] },
   { number: "06", title: "Al Fresco Cafe and Bar", description: "An open air destination from day to evening.", emphasis: "Warm local character, open to the surroundings", images: ["alfresco-cafe-bar/01-exterior.png","alfresco-cafe-bar/02-exterior.png"] },
   { number: "07", title: "One Storey Coffee Shop", description: "A compact coffee space for connection and calm.", emphasis: "Simple forms make room for people", images: ["coffee-shop/01-exterior.png"] },
-  { number: "08", title: "Cafe and Study Hub Interior Renovation", description: "A renewed interior for productive comfort.", emphasis: "A setting for focus, conversation, and pause", images: ["cafe-study-hub-interior-renovation/01-exterior.png","cafe-study-hub-interior-renovation/02-interior.png","cafe-study-hub-interior-renovation/03-interior.png","cafe-study-hub-interior-renovation/04-interior.png","cafe-study-hub-interior-renovation/05-interior.png","cafe-study-hub-interior-renovation/06-detail.png","cafe-study-hub-interior-renovation/07-presentation.jpeg","cafe-study-hub-interior-renovation/08-presentation.jpeg"] },
 ];
 
 const src = (file: string) => {
@@ -24,6 +23,8 @@ const src = (file: string) => {
 export default function Home() {
   const [gallery, setGallery] = useState<GalleryState>(null);
   const [activeImage, setActiveImage] = useState<string | null>(null);
+  const [activeProject, setActiveProject] = useState("01");
+  const [showBackToTop, setShowBackToTop] = useState(false);
 
   useEffect(() => {
     const close = (event: KeyboardEvent) => { if (event.key === "Escape") activeImage ? setActiveImage(null) : setGallery(null); };
@@ -31,27 +32,41 @@ export default function Home() {
     return () => window.removeEventListener("keydown", close);
   }, [activeImage]);
 
+  useEffect(() => {
+    const cards = Array.from(document.querySelectorAll<HTMLElement>("[data-project]"));
+    const observer = new IntersectionObserver((entries) => {
+      const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+      if (visible) setActiveProject((visible.target as HTMLElement).dataset.project ?? "01");
+    }, { threshold: [0.35, 0.55, 0.75] });
+    cards.forEach((card) => observer.observe(card));
+    const updateBackToTop = () => setShowBackToTop(window.scrollY > window.innerHeight * 0.7);
+    window.addEventListener("scroll", updateBackToTop, { passive: true });
+    updateBackToTop();
+    return () => { observer.disconnect(); window.removeEventListener("scroll", updateBackToTop); };
+  }, []);
+
   return <main className="archive" id="top">
     <aside className="rail">
       <a className="rail-name" href="#top">Bea Jean<br />Rowella<br />Esteleydes</a>
       <span className="rail-rule" />
-      <nav aria-label="Project index">{projects.map((project) => <a key={project.number} href={`#project-${project.number}`}>{project.number}</a>)}</nav>
-      <span className="rail-rule" /><p>Selected<br />works</p>
+      <nav aria-label="Project index">{projects.map((project) => <a className={activeProject === project.number ? "active" : ""} key={project.number} href={`#project-${project.number}`} aria-label={`Go to project ${project.number}`}>{project.number}</a>)}</nav>
     </aside>
 
     <header className="mobile-header"><a href="#top">BJE</a><span>Selected works</span></header>
 
     <div className="archive-content">
-      <section className="opening" style={{ backgroundImage: `linear-gradient(140deg,rgba(7,29,22,.32),rgba(5,23,18,.9)),url(${src(projects[0].images[0])})` }}><p>Architectural portfolio · 2021 to 2026</p><h1>Architecture for people,<br /><em>nature, and life.</em></h1><a href="#project-01">Enter collection <span>↓</span></a></section>
-      {projects.map((project) => <section className="project-card" id={`project-${project.number}`} key={project.number}>
+      <section className="opening" style={{ backgroundImage: `linear-gradient(140deg,rgba(7,29,22,.32),rgba(5,23,18,.9)),url(${src(projects[0].images[0])})` }}><p>Architectural portfolio · 2021 to 2026</p><h1>Spaces shaped by people,<br /><em>nature, and life.</em></h1><a href="#project-01">Enter collection <span>↓</span></a></section>
+      {projects.map((project) => <section className="project-card" data-project={project.number} id={`project-${project.number}`} key={project.number}>
         <div className="project-media">
           {project.images[1] ? <img className="supporting-image" src={src(project.images[1])} alt="" /> : <div className="supporting-image empty" aria-hidden="true" />}
           <button className="primary-image" onClick={() => setGallery({ project, kind: "gallery" })} aria-label={`Open ${project.title} gallery`}><img src={src(project.images[0])} alt={`${project.title} exterior`} /></button>
         </div>
         <div className="project-copy"><p className="number">{project.number}</p><h2>{project.title}</h2><span className="copy-rule" /><p className="emphasis">{project.emphasis}</p><p className="description">{project.description}</p><div className="project-actions"><button onClick={() => setGallery({ project, kind: "gallery" })}>View gallery <span>→</span></button>{project.plans && <button onClick={() => setGallery({ project, kind: "plans" })}>Floor plans <span>{project.plans.length}</span></button>}</div></div>
       </section>)}
+      <section className="other-works" aria-label="Other works"><div><p>Other works</p><h2>Additional architectural studies</h2></div><div className="other-work-grid"><button onClick={() => setActiveImage("other-works/paglakayta-agang-silang.png")}><img src={src("other-works/paglakayta-agang-silang.png")} alt="Paglakayta Agang Silang presentation board" /></button><button onClick={() => setActiveImage("other-works/luntian-paraiso-hotel.png")}><img src={src("other-works/luntian-paraiso-hotel.png")} alt="Luntian Paraiso hotel presentation board" /></button></div></section>
     </div>
 
+    {showBackToTop && <button className="back-to-top" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>Back to top ↑</button>}
     {gallery && <div className="gallery-overlay" role="dialog" aria-modal="true" aria-label={`${gallery.project.title} ${gallery.kind}`}><button className="modal-close" onClick={() => setGallery(null)}>Close ×</button><div className="gallery-modal"><p className="modal-kicker">{gallery.project.number} · {gallery.kind === "plans" ? "Floor plans" : "Project gallery"}</p><h2>{gallery.project.title}</h2><div className={gallery.kind === "plans" ? "modal-grid plans" : "modal-grid"}>{(gallery.kind === "plans" ? gallery.project.plans : gallery.project.images)?.map((file, index) => <button key={file} onClick={() => setActiveImage(file)}><img src={src(file)} alt={`${gallery.project.title} ${gallery.kind === "plans" ? "floor plan" : "visual"} ${index + 1}`} /></button>)}</div></div></div>}
     {activeImage && <div className="image-overlay" role="dialog" aria-modal="true" onClick={() => setActiveImage(null)}><button className="modal-close" onClick={() => setActiveImage(null)}>Close ×</button><img src={src(activeImage)} alt="Expanded project visual" onClick={(event) => event.stopPropagation()} /></div>}
   </main>;
